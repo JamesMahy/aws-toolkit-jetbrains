@@ -18,6 +18,7 @@ import software.aws.toolkits.jetbrains.services.lambda.Lambda
 import software.aws.toolkits.jetbrains.services.lambda.LambdaBuilder
 import software.aws.toolkits.jetbrains.services.lambda.execution.sam.HandlerRunSettings
 import software.aws.toolkits.jetbrains.services.lambda.steps.BuildLambdaRequest
+import software.aws.toolkits.jetbrains.settings.LambdaSettings
 import software.aws.toolkits.jetbrains.utils.execution.steps.Context
 import software.aws.toolkits.jetbrains.utils.execution.steps.Step
 import software.aws.toolkits.jetbrains.utils.execution.steps.StepEmitter
@@ -52,14 +53,18 @@ class NodeJsLambdaBuilder : LambdaBuilder() {
                     val tsOutput = sourceRoot.resolve(TS_BUILD_DIR).normalize().toAbsolutePath().toString()
                     // relative to existing tsconfig because there is no other option https://github.com/microsoft/TypeScript/issues/25430
                     val tsConfig = sourceRoot.resolve(TS_CONFIG_FILE)
+                    var createdNewConfig = false;
+
                     if (!tsConfig.exists()) {
                         Files.createFile(tsConfig)
+                        createdNewConfig = true;
                     }
 
-                    // TODO: if there's an existing tsconfig file, should we use it as a base?
-                    tsConfig.writeText(
-                        // language=JSON
-                        """
+                    if(!createdNewConfig && !LambdaSettings.getInstance(project).preventTSConfigOverwrite) {
+                        // TODO: if there's an existing tsconfig file, should we use it as a base?
+                        tsConfig.writeText(
+                            // language=JSON
+                            """
                         {
                             "compilerOptions": {
                                 "${TypeScriptConfig.TYPE_ROOTS}": [
@@ -77,7 +82,8 @@ class NodeJsLambdaBuilder : LambdaBuilder() {
                             }
                         }
                         """.trimIndent()
-                    )
+                        )
+                    }
 
                     val tsConfigVirtualFile = VfsUtil.findFile(tsConfig, true) ?: throw RuntimeException("Could not find temporary tsconfig file using VFS")
                     val tsService = TypeScriptCompilerService.getServiceForFile(project, handlerElement.containingFile.virtualFile)

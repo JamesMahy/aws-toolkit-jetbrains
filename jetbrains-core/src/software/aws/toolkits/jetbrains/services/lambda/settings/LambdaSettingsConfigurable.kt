@@ -20,6 +20,17 @@ class LambdaSettingsConfigurable(private val project: Project) : BoundConfigurab
                 lambdaSettings::showAllHandlerGutterIcons,
                 message("aws.settings.sam.show_all_gutter_icons_tooltip")
             )
+
+        }
+        row {
+            label(message("aws.settings.sam.typescript.title"))
+        }
+        row {
+            checkBox(
+                message("aws.settings.sam.typescript.no_overwrite_config"),
+                lambdaSettings::preventTSConfigOverwrite,
+                message("aws.settings.sam.typescript.no_overwrite_config_tooltip")
+            )
         }
     }
 }

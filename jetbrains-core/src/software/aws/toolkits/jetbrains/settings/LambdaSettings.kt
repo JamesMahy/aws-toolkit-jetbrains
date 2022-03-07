@@ -26,6 +26,13 @@ class LambdaSettings(private val project: Project) : PersistentStateComponent<La
             project.messageBus.syncPublisher(LambdaSettingsChangeListener.TOPIC).samShowAllHandlerGutterIconsSettingsChange(value)
         }
 
+    var preventTSConfigOverwrite: Boolean
+        get() = state.preventTSConfigOverwrite
+        set(value) {
+            state.preventTSConfigOverwrite = value
+            project.messageBus.syncPublisher(LambdaSettingsChangeListener.TOPIC).samPreventTSConfigOverwrite(value)
+        }
+
     companion object {
         @JvmStatic
         fun getInstance(project: Project): LambdaSettings = ServiceManager.getService(project, LambdaSettings::class.java)
@@ -33,5 +40,6 @@ class LambdaSettings(private val project: Project) : PersistentStateComponent<La
 }
 
 data class LambdaConfiguration(
-    var showAllHandlerGutterIcons: Boolean = false
+    var showAllHandlerGutterIcons: Boolean = false,
+    var preventTSConfigOverwrite: Boolean = false
 )

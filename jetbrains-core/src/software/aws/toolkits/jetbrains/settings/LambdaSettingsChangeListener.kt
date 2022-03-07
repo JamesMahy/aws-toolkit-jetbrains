@@ -14,4 +14,6 @@ interface LambdaSettingsChangeListener {
      * SAM CLI version evaluation finished for the chosen profile, and it may be validated synchronously now.
      */
     fun samShowAllHandlerGutterIconsSettingsChange(isShow: Boolean)
+
+    fun samPreventTSConfigOverwrite(prevent: Boolean)
 }
