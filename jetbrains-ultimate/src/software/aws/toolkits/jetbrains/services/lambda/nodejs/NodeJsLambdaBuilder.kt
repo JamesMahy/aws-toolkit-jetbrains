@@ -53,35 +53,35 @@ class NodeJsLambdaBuilder : LambdaBuilder() {
                     val tsOutput = sourceRoot.resolve(TS_BUILD_DIR).normalize().toAbsolutePath().toString()
                     // relative to existing tsconfig because there is no other option https://github.com/microsoft/TypeScript/issues/25430
                     val tsConfig = sourceRoot.resolve(TS_CONFIG_FILE)
-                    var createdNewConfig = false;
+                    var createdNewConfig = false
 
                     if (!tsConfig.exists()) {
                         Files.createFile(tsConfig)
-                        createdNewConfig = true;
+                        createdNewConfig = true
                     }
 
-                    if(!createdNewConfig && !LambdaSettings.getInstance(project).preventTSConfigOverwrite) {
+                    if (!createdNewConfig && !LambdaSettings.getInstance(project).preventTSConfigOverwrite) {
                         // TODO: if there's an existing tsconfig file, should we use it as a base?
                         tsConfig.writeText(
                             // language=JSON
                             """
-                        {
-                            "compilerOptions": {
-                                "${TypeScriptConfig.TYPE_ROOTS}": [
-                                  "${sourceRoot.resolve(TypeScriptConfig.DEFAULT_TYPES_DIRECTORY)}"
-                                ],
-                                "${TypeScriptConfig.TYPES}": [
-                                  "node"
-                                ],
-                                "${TypeScriptConfig.TARGET_OPTION}": "${TypeScriptConfig.LanguageTarget.ES6.libName}",
-                                "${TypeScriptConfig.MODULE}": "${TypeScriptConfig.MODULE_COMMON_JS}",
-                                "${TypeScriptConfig.OUT_DIR}": "$tsOutput",
-                                "${TypeScriptConfig.ROOT_DIR}": ".",
-                                "sourceRoot": "$sourceRoot",
-                                "${TypeScriptConfig.SOURCE_MAP}": true
+                            {
+                                "compilerOptions": {
+                                    "${TypeScriptConfig.TYPE_ROOTS}": [
+                                      "${sourceRoot.resolve(TypeScriptConfig.DEFAULT_TYPES_DIRECTORY)}"
+                                    ],
+                                    "${TypeScriptConfig.TYPES}": [
+                                      "node"
+                                    ],
+                                    "${TypeScriptConfig.TARGET_OPTION}": "${TypeScriptConfig.LanguageTarget.ES6.libName}",
+                                    "${TypeScriptConfig.MODULE}": "${TypeScriptConfig.MODULE_COMMON_JS}",
+                                    "${TypeScriptConfig.OUT_DIR}": "$tsOutput",
+                                    "${TypeScriptConfig.ROOT_DIR}": ".",
+                                    "sourceRoot": "$sourceRoot",
+                                    "${TypeScriptConfig.SOURCE_MAP}": true
+                                }
                             }
-                        }
-                        """.trimIndent()
+                            """.trimIndent()
                         )
                     }
 

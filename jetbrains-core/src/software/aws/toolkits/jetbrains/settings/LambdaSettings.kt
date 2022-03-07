@@ -30,7 +30,6 @@ class LambdaSettings(private val project: Project) : PersistentStateComponent<La
         get() = state.preventTSConfigOverwrite
         set(value) {
             state.preventTSConfigOverwrite = value
-            project.messageBus.syncPublisher(LambdaSettingsChangeListener.TOPIC).samPreventTSConfigOverwrite(value)
         }
 
     companion object {
